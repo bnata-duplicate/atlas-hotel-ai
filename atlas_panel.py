@@ -47,31 +47,30 @@ if uploaded_file is not None:
         col_left, col_right = st.columns(2)
         
         with col_left:
-            with col_right:
+           with col_right:
             st.markdown("### 🤖 ATLAS-1 Stratejik Analiz Raporu")
             
             pazar_ort = df['Price_ADR'].mean()
-            sim_ort = df['Yeni_Fiyat'].mean()
             
             # ATLAS-1 Muhakeme Katmanı
-            st.info(f"📍 **Pazar Konumlandırması:** Şu an pazar ortalaması {pazar_ort:.2f} € seviyesinde. Senaryonuzda fiyatlar {sim_ort:.2f} € bandına çekiliyor.")
+            st.info(f"📍 **Pazar Konumlandırması:** Şu an pazar ortalaması {pazar_ort:.2f} € seviyesinde.")
             
             for _, row in df.iterrows():
                 fiyat_farki = ((row['Yeni_Fiyat'] / pazar_ort) - 1) * 100
                 skor = row['Review_Score']
                 otel = row['Hotel']
                 
-                # Dinamik Karar Algoritması (ATLAS-1 Zekası)
+                # Dinamik Karar Algoritması
                 if skor >= 9.0 and fiyat_farki > 20:
-                    st.warning(f"⚠️ **{otel}**: Kaliteniz yüksek (Skor: {skor}) ancak pazarın %{fiyat_farki:.1f} üzerindesiniz. Bu seviye 'Lüks Segment' riskidir, doluluk takibi kritik!")
+                    st.warning(f"⚠️ **{otel}**: Kaliteniz yüksek (Skor: {skor}) ancak pazarın %{fiyat_farki:.1f} üzerindesiniz. Lüks segment riskidir.")
                 elif skor >= 9.0 and fiyat_farki <= 20:
-                    st.success(f"💎 **{otel}**: İdeal Konum! Yüksek kalite ve makul fiyat farkı. Pazar payını artırmak için mükemmel bir nokta.")
+                    st.success(f"💎 **{otel}**: İdeal Konum! Yüksek kalite ve makul fiyat farkı.")
                 elif skor < 8.5 and fiyat_farki > 0:
-                    st.error(f"🚨 **{otel}**: KRİTİK UYARI! Memnuniyet düşük (Skor: {skor}) iken pazarın üzerinde fiyatlama yapıyorsunuz. Misafir kaybı kaçınılmaz görünüyor!")
+                    st.error(f"🚨 **{otel}**: KRİTİK UYARI! Memnuniyet düşükken pahalı fiyatlama!")
                 elif fiyat_farki < -15:
-                    st.info(f"🏷️ **{otel}**: Agresif Fiyatlama! Pazarın %{abs(fiyat_farki):.1f} altındasınız. Bu hamle rakiplerden ciddi talep çalacaktır.")
+                    st.info(f"🏷️ **{otel}**: Agresif Fiyatlama! Rakiplerden talep çalacaktır.")
                 else:
-                    st.info(f"⚖️ **{row['Hotel']}**: Denge Bölgesi. Mevcut strateji pazar dinamikleriyle uyumlu seyrediyor.")
+                    st.info(f"⚖️ **{otel}**: Denge Bölgesi. Strateji pazarla uyumlu.")
 
             st.caption("🔍 *ATLAS-1: Pazar verilerini ve kullanıcı senaryosunu gerçek zamanlı analiz eder.*")
             st.markdown("### 📊 Fiyat vs Müşteri Memnuniyeti")
