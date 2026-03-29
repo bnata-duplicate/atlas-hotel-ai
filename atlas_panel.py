@@ -42,35 +42,48 @@ if uploaded_file is not None:
         c1.metric("Toplam Otel", len(df))
         c2.metric("Pazar Ortalama ADR", f"{df['Price_ADR'].mean():.2f} €")
         c3.metric("Simülasyon Fiyatı (Ort)", f"{df['Yeni_Fiyat'].mean():.2f} €", f"{fiyat_degisimi}%")
-
-        # --- ORTA PANEL: GRAFİKLER ---
-        col_left, col_right = st.columns(2)
+# --- 📈 ANA ANALİZ ALANI (TAM GENİŞLİK) ---
+        st.markdown("---")
+        st.markdown("### 📊 Pazar Konumlandırma Haritası")
         
-        with col_left:
-           with col_right:
-            st.markdown("### 🤖 ATLAS-1 Stratejik Analiz Raporu")
+        # Grafiği tam genişlikte oluşturuyoruz
+        fig = px.scatter(df, x="Price_ADR", y="Review_Score", size="Occupancy_Est.", 
+                         color="Hotel", hover_name="Hotel", text="Hotel",
+                         height=500) 
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("---")
+
+        # --- 🤖 ATLAS-1 STRATEJİK ANALİZ RAPORU ---
+        st.markdown("### 🤖 ATLAS-1 Stratejik Analiz Raporu")
+        
+        pazar_ort = df['Price_ADR'].mean()
+        st.info(f"📍 **Pazar Konumlandırması:** Şu an pazar ortalama fiyatı {pazar_ort:.2f} € seviyesinde.")
+
+        # Otel raporlarını yan yana iki sütunda gösterelim (Denge sağlar)
+        c1, c2 = st.columns(2)
+        
+        for i, (index, row) in enumerate(df.iterrows()):
+            # Otelleri sırayla sütunlara paylaştır (0, 2, 4 sola | 1, 3, 5 sağa)
+            hedef_sutun = c1 if i % 2 == 0 else c2
             
-            pazar_ort = df['Price_ADR'].mean()
-            
-            # ATLAS-1 Muhakeme Katmanı
-            st.info(f"📍 **Pazar Konumlandırması:** Şu an pazar ortalaması {pazar_ort:.2f} € seviyesinde.")
-            
-            for _, row in df.iterrows():
+            with hedef_sutun:
                 fiyat_farki = ((row['Yeni_Fiyat'] / pazar_ort) - 1) * 100
                 skor = row['Review_Score']
                 otel = row['Hotel']
                 
-                # Dinamik Karar Algoritması
                 if skor >= 9.0 and fiyat_farki > 20:
-                    st.warning(f"⚠️ **{otel}**: Kaliteniz yüksek (Skor: {skor}) ancak pazarın %{fiyat_farki:.1f} üzerindesiniz. Lüks segment riskidir.")
+                    st.warning(f"⚠️ **{otel}**: Kalite yüksek (Skor: {skor}) ancak fiyat riskli! Pazarın %{fiyat_farki:.1f} üzerindesiniz.")
                 elif skor >= 9.0 and fiyat_farki <= 20:
-                    st.success(f"💎 **{otel}**: İdeal Konum! Yüksek kalite ve makul fiyat farkı.")
+                    st.success(f"💎 **{otel}**: İdeal Konumlandırma! Kalite-Fiyat dengesi mükemmel.")
                 elif skor < 8.5 and fiyat_farki > 0:
-                    st.error(f"🚨 **{otel}**: KRİTİK UYARI! Memnuniyet düşükken pahalı fiyatlama!")
+                    st.error(f"🚨 **{otel}**: KRİTİK! Memnuniyet düşükken pazar üstü fiyatlama!")
                 elif fiyat_farki < -15:
-                    st.info(f"🏷️ **{otel}**: Agresif Fiyatlama! Rakiplerden talep çalacaktır.")
+                    st.info(f"🏷️ **{otel}**: Agresif Fiyatlama! Rakiplerden ciddi talep çalabilir.")
                 else:
-                    st.info(f"⚖️ **{otel}**: Denge Bölgesi. Strateji pazarla uyumlu.")
+                    st.info(f"⚖️ **{otel}**: Denge Bölgesi. Pazar dinamikleriyle uyumlu.")
+
+        st.caption("🔍 *ATLAS-1: Pazar verilerini ve kullanıcı senaryosunu gerçek zamanlı analiz eder.*")
 
             st.caption("🔍 *ATLAS-1: Pazar verilerini ve kullanıcı senaryosunu gerçek zamanlı analiz eder.*")
             st.markdown("### 📊 Fiyat vs Müşteri Memnuniyeti")
