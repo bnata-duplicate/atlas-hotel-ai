@@ -40,13 +40,6 @@ if uploaded_file is not None:
         st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("---")
-# --- 📈 ANA ANALİZ GRAFİĞİ (TAM GENİŞLİK) ---
-        st.markdown("### 📊 Pazar Konumlandırma Haritası")
-        fig = px.scatter(df, x="Price_ADR", y="Review_Score", size="Occupancy_Est.", 
-                         color="Hotel", hover_name="Hotel", text="Hotel", height=500) 
-        st.plotly_chart(fig, use_container_width=True)
-
-        st.markdown("---")
 
         # --- 🤖 ATLAS-1 STRATEJİK ANALİZ RAPORU ---
         st.markdown("### 🤖 ATLAS-1 Stratejik Analiz Raporu")
@@ -54,11 +47,10 @@ if uploaded_file is not None:
         st.info(f"📍 **Pazar Konumlandırması:** Pazar ortalama fiyatı {pazar_ort:.2f} € seviyesinde.")
 
         col1, col2 = st.columns(2)
-        
         for i, (index, row) in enumerate(df.iterrows()):
             target_col = col1 if i % 2 == 0 else col2
             with target_col:
-                # Slider hareketine duyarlı yeni hesaplama (Kendi fiyatına göre değişim):
+                # Slider hareketine duyarlı analiz (Kendi eski fiyatına göre):
                 degisim_orani = ((row['Yeni_Fiyat'] / row['Price_ADR']) - 1) * 100
                 skor = row['Review_Score']
                 
@@ -74,26 +66,6 @@ if uploaded_file is not None:
                     st.success(f"✅ **{row['Hotel']}**: Dengeli Hamle. Pazar skoruyla uyumlu.")
 
         st.caption("🔍 *ATLAS-1: Fiyat değişimlerini ve pazar skorlarını anlık analiz eder.*")
-        # --- 🤖 ATLAS-1 STRATEJİK ANALİZ RAPORU ---
-        st.markdown("### 🤖 ATLAS-1 Stratejik Analiz Raporu")
-        pazar_ort = df['Price_ADR'].mean()
-        st.info(f"📍 **Pazar Konumlandırması:** Pazar ortalama fiyatı {pazar_ort:.2f} € seviyesinde.")
-
-        col1, col2 = st.columns(2)
-        for i, (index, row) in enumerate(df.iterrows()):
-            target_col = col1 if i % 2 == 0 else col2
-            with target_col:
-                fiyat_farki = ((row['Yeni_Fiyat'] / pazar_ort) - 1) * 100
-                if row['Review_Score'] >= 9.0 and fiyat_farki > 20:
-                    st.warning(f"⚠️ **{row['Hotel']}**: Kalite yüksek ama fiyat riskli! (%{fiyat_farki:.1f} fark)")
-                elif row['Review_Score'] >= 9.0 and fiyat_farki <= 20:
-                    st.success(f"💎 **{row['Hotel']}**: İdeal Konumlandırma! Kalite-Fiyat dengesi harika.")
-                elif row['Review_Score'] < 8.5 and fiyat_farki > 0:
-                    st.error(f"🚨 **{row['Hotel']}**: KRİTİK! Memnuniyet düşükken pahalı fiyatlama!")
-                else:
-                    st.info(f"⚖️ **{row['Hotel']}**: Denge Bölgesi. Pazarla uyumlu.")
-
-        st.caption("🔍 *ATLAS-1: Pazar verilerini gerçek zamanlı analiz eder.*")
         
         # --- 📑 DETAYLI VERİ TABLOSU ---
         st.markdown("---")
