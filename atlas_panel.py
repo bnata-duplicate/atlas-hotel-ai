@@ -10,11 +10,11 @@ st.title("📈 AI ATLAS STRATEGIC OPTIMIZATION ENGINE")
 st.markdown("---")
 
 # Excel Verisini Oku
-desktop_yolu = os.path.join(os.path.expanduser("~"), "Desktop")
-excel_dosyasi = os.path.join(desktop_yolu, "otel_verileri.xlsx")
+# --- 📂 EXCEL YÜKLEME PANELİ ---
+uploaded_file = st.sidebar.file_uploader("Otel Veri Setini Yükleyin (Excel)", type=["xlsx"])
 
-if os.path.exists(excel_dosyasi):
-    df = pd.read_excel(excel_dosyasi)
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
 # --- 🎯 AKTİF/PASİF OTEL SEÇİCİ (YENİ KATMAN) ---
     st.sidebar.markdown("---")
     oteller = df['Hotel'].unique().tolist()
